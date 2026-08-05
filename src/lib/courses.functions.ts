@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Json } from "@/integrations/supabase/types";
 import type { Course, ExamQuestion, ExamAttempt, LessonExam } from "./mock-data";
 
 // === Schemas ===
@@ -152,7 +153,7 @@ function toDbExam(input: z.infer<typeof examInput>) {
     passing_pct: input.passingPct,
     shuffle_questions: input.shuffleQuestions,
     shuffle_answers: input.shuffleAnswers,
-    questions: input.questions as ExamQuestion[],
+    questions: input.questions as unknown as Json,
   };
 }
 
@@ -443,7 +444,7 @@ export const recordAttempt = createServerFn({ method: "POST" })
     const { data: examRow, error } = await context.supabase.from("exams").select("*").eq("id", data.examId).single();
     if (error || !examRow) throw error ?? new Error("Exam not found");
 
-    const questions = (examRow.questions ?? []) as ExamQuestion[];
+    const questions = (examRow.questions ?? []) as unknown as ExamQuestion[];
     const { total, earned, scorePct, results } = gradeExam(questions, data.answers);
 
     const { error: insertError } = await context.supabase.from("exam_attempts").insert({
@@ -453,7 +454,7 @@ export const recordAttempt = createServerFn({ method: "POST" })
       earned,
       total,
       time_sec: data.timeSec,
-      answers: results,
+      answers: results as unknown as Json,
     });
     if (insertError) throw insertError;
 
