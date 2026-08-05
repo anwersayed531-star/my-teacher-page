@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, BookOpen, Files, FileQuestion, Users,
+  LayoutDashboard, BookOpen, Files, FileQuestion, Users, Layers,
   KeyRound, MessagesSquare, Megaphone, UserCog, UserRound,
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
