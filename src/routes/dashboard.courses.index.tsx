@@ -11,6 +11,7 @@ import {
 import { listTeacherCourses } from "@/lib/courses.functions";
 import { GRADE_LEVELS } from "@/lib/grades";
 import { useAppState } from "@/lib/app-state";
+import { useTeacherGrades } from "@/lib/teacher-grades";
 import { Plus, BookOpen, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/courses/")({
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/dashboard/courses/")({
 
 function CoursesList() {
   const { selectedGrade, setSelectedGrade } = useAppState();
+  const { gradeNames } = useTeacherGrades();
   const { data: courses = [], isLoading } = useQuery({
     queryKey: ["teacher-courses"],
     queryFn: () => listTeacherCourses(),
@@ -39,7 +41,7 @@ function CoursesList() {
               <SelectTrigger className="w-56"><SelectValue placeholder="الصف الدراسي" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">كل الصفوف</SelectItem>
-                {GRADE_LEVELS.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+                {gradeNames.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
               </SelectContent>
             </Select>
             <Button className="rounded-full" asChild>
