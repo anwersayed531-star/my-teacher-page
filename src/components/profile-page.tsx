@@ -11,6 +11,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { GRADE_LEVELS } from "@/lib/grades";
+import { useTeacherGrades } from "@/lib/teacher-grades";
 import { useAuth } from "@/lib/auth";
 import { LogOut, Mail, Phone, ShieldCheck, User as UserIcon } from "lucide-react";
 
@@ -35,7 +36,7 @@ export function ProfilePage({ variant }: { variant: "teacher" | "student" }) {
     if (!profile) return;
     setFullName(profile.full_name ?? "");
     setPhone(profile.phone ?? "");
-    setGrade(profile.grade ?? GRADE_LEVELS[0]);
+    setGrade(profile.grade ?? "");
     setBio(profile.bio ?? "");
   }, [profile]);
 
@@ -49,13 +50,6 @@ export function ProfilePage({ variant }: { variant: "teacher" | "student" }) {
     <>
       <TopBar title="الصفحة الشخصية" />
       <main className="flex-1 space-y-6 p-4 md:p-6">
-        {!tablesReady && (
-          <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
-            جداول <code>profiles</code> / <code>user_roles</code> لسه مش متعملة في Supabase — شغّل ملف{" "}
-            <code>supabase/sql/001_profiles.sql</code> من SQL Editor علشان البيانات تتخزّن بشكل دائم.
-          </div>
-        )}
-
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6 text-center sm:flex-row sm:text-right">
             <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary/10 text-2xl font-bold text-primary">
@@ -122,7 +116,7 @@ export function ProfilePage({ variant }: { variant: "teacher" | "student" }) {
                   <Select value={grade} onValueChange={setGrade}>
                     <SelectTrigger><SelectValue placeholder="اختر الصف" /></SelectTrigger>
                     <SelectContent>
-                      {GRADE_LEVELS.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+                      {(gradeNames.length ? gradeNames : [...GRADE_LEVELS]).map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
