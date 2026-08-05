@@ -13,6 +13,7 @@ import {
 import { mockStudents } from "@/lib/mock-data";
 import { GRADE_LEVELS } from "@/lib/grades";
 import { useAppState } from "@/lib/app-state";
+import { useTeacherGrades } from "@/lib/teacher-grades";
 import { metricsForStudent, isAtRisk } from "@/lib/analytics";
 import { Search, AlertTriangle } from "lucide-react";
 
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/dashboard/students/")({
 
 function StudentsList() {
   const { selectedGrade, setSelectedGrade } = useAppState();
+  const { gradeNames } = useTeacherGrades();
   const [q, setQ] = useState("");
   const filtered = mockStudents.filter((s) =>
     (s.name.includes(q) || s.email.includes(q)) &&
@@ -40,7 +42,7 @@ function StudentsList() {
             <SelectTrigger className="w-56"><SelectValue placeholder="الصف الدراسي" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">كل الصفوف</SelectItem>
-              {GRADE_LEVELS.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+              {gradeNames.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>

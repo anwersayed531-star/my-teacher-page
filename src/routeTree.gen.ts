@@ -21,6 +21,7 @@ import { Route as StudentMessagesRouteImport } from './routes/student.messages'
 import { Route as StudentDashboardRouteImport } from './routes/student.dashboard'
 import { Route as DashboardProfileRouteImport } from './routes/dashboard.profile'
 import { Route as DashboardMessagesRouteImport } from './routes/dashboard.messages'
+import { Route as DashboardGradesRouteImport } from './routes/dashboard.grades'
 import { Route as DashboardFilesRouteImport } from './routes/dashboard.files'
 import { Route as DashboardCodesRouteImport } from './routes/dashboard.codes'
 import { Route as DashboardAnnouncementsRouteImport } from './routes/dashboard.announcements'
@@ -94,6 +95,11 @@ const DashboardProfileRoute = DashboardProfileRouteImport.update({
 const DashboardMessagesRoute = DashboardMessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardGradesRoute = DashboardGradesRouteImport.update({
+  id: '/grades',
+  path: '/grades',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardFilesRoute = DashboardFilesRouteImport.update({
@@ -178,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/announcements': typeof DashboardAnnouncementsRoute
   '/dashboard/codes': typeof DashboardCodesRoute
   '/dashboard/files': typeof DashboardFilesRoute
+  '/dashboard/grades': typeof DashboardGradesRoute
   '/dashboard/messages': typeof DashboardMessagesRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/student/dashboard': typeof StudentDashboardRoute
@@ -205,6 +212,7 @@ export interface FileRoutesByTo {
   '/dashboard/announcements': typeof DashboardAnnouncementsRoute
   '/dashboard/codes': typeof DashboardCodesRoute
   '/dashboard/files': typeof DashboardFilesRoute
+  '/dashboard/grades': typeof DashboardGradesRoute
   '/dashboard/messages': typeof DashboardMessagesRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/student/dashboard': typeof StudentDashboardRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/dashboard/announcements': typeof DashboardAnnouncementsRoute
   '/dashboard/codes': typeof DashboardCodesRoute
   '/dashboard/files': typeof DashboardFilesRoute
+  '/dashboard/grades': typeof DashboardGradesRoute
   '/dashboard/messages': typeof DashboardMessagesRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/student/dashboard': typeof StudentDashboardRoute
@@ -264,6 +273,7 @@ export interface FileRouteTypes {
     | '/dashboard/announcements'
     | '/dashboard/codes'
     | '/dashboard/files'
+    | '/dashboard/grades'
     | '/dashboard/messages'
     | '/dashboard/profile'
     | '/student/dashboard'
@@ -291,6 +301,7 @@ export interface FileRouteTypes {
     | '/dashboard/announcements'
     | '/dashboard/codes'
     | '/dashboard/files'
+    | '/dashboard/grades'
     | '/dashboard/messages'
     | '/dashboard/profile'
     | '/student/dashboard'
@@ -319,6 +330,7 @@ export interface FileRouteTypes {
     | '/dashboard/announcements'
     | '/dashboard/codes'
     | '/dashboard/files'
+    | '/dashboard/grades'
     | '/dashboard/messages'
     | '/dashboard/profile'
     | '/student/dashboard'
@@ -433,6 +445,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardMessagesRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/grades': {
+      id: '/dashboard/grades'
+      path: '/grades'
+      fullPath: '/dashboard/grades'
+      preLoaderRoute: typeof DashboardGradesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/files': {
       id: '/dashboard/files'
       path: '/files'
@@ -538,6 +557,7 @@ interface DashboardRouteChildren {
   DashboardAnnouncementsRoute: typeof DashboardAnnouncementsRoute
   DashboardCodesRoute: typeof DashboardCodesRoute
   DashboardFilesRoute: typeof DashboardFilesRoute
+  DashboardGradesRoute: typeof DashboardGradesRoute
   DashboardMessagesRoute: typeof DashboardMessagesRoute
   DashboardProfileRoute: typeof DashboardProfileRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -556,6 +576,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAnnouncementsRoute: DashboardAnnouncementsRoute,
   DashboardCodesRoute: DashboardCodesRoute,
   DashboardFilesRoute: DashboardFilesRoute,
+  DashboardGradesRoute: DashboardGradesRoute,
   DashboardMessagesRoute: DashboardMessagesRoute,
   DashboardProfileRoute: DashboardProfileRoute,
   DashboardIndexRoute: DashboardIndexRoute,
@@ -605,13 +626,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

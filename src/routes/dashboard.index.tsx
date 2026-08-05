@@ -18,6 +18,7 @@ import {
 } from "@/lib/mock-data";
 import { GRADE_LEVELS } from "@/lib/grades";
 import { useAppState } from "@/lib/app-state";
+import { useTeacherGrades } from "@/lib/teacher-grades";
 import {
   studentMetrics, isAtRisk, mostMissedQuestions, sendReminder, exportRowsToCsv,
 } from "@/lib/analytics";
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/dashboard/")({
 
 function DashboardHome() {
   const { selectedGrade, setSelectedGrade } = useAppState();
+  const { gradeNames } = useTeacherGrades();
 
   // TODO: connect to Supabase — replace mock filters with grade-scoped DB queries.
   const courses = selectedGrade === "all" ? mockCourses : mockCourses.filter((c) => c.gradeLevel === selectedGrade);
@@ -74,7 +76,7 @@ function DashboardHome() {
             <SelectTrigger className="w-56"><SelectValue placeholder="الصف الدراسي" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">كل الصفوف</SelectItem>
-              {GRADE_LEVELS.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+              {gradeNames.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
