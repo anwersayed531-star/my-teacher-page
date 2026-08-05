@@ -21,7 +21,8 @@ const ROLE_LABEL: Record<string, string> = {
 };
 
 export function ProfilePage({ variant }: { variant: "teacher" | "student" }) {
-  const { user, profile, role, loading, tablesReady, saveProfile, signOut } = useAuth();
+  const { user, profile, role, loading, saveProfile, signOut } = useAuth();
+  const { gradeNames } = useTeacherGrades();
   const nav = useNavigate();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
