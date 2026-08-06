@@ -353,30 +353,36 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          email: string | null
           full_name: string | null
           grade: string | null
           id: string
           phone: string | null
+          student_code: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           grade?: string | null
           id: string
           phone?: string | null
+          student_code?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           grade?: string | null
           id?: string
           phone?: string | null
+          student_code?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -616,6 +622,13 @@ export type Database = {
       is_enrolled: { Args: { _course_id: string }; Returns: boolean }
       is_teacher: { Args: never; Returns: boolean }
       my_grade: { Args: never; Returns: string }
+      platform_teacher: {
+        Args: never
+        Returns: {
+          full_name: string
+          id: string
+        }[]
+      }
       redeem_code: { Args: { _code: string }; Returns: string }
     }
     Enums: {
