@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { EXAM_AUTO_GRADED, type ExamQuestion } from "@/lib/mock-data";
+import { EXAM_AUTO_GRADED, type ExamQuestion } from "@/lib/content-types";
 import { getExam, recordAttempt } from "@/lib/courses.functions";
 import { Loader2 } from "lucide-react";
 

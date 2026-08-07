@@ -8,7 +8,7 @@ import {
   type ExamQuestion, type ExamQType, type ExamMCQ, type ExamTF, type ExamMulti,
   type ExamOrder, type ExamMatch, type ExamImage, type ExamAudio,
   EXAM_TYPE_LABELS, EXAM_AUTO_GRADED, makeExamQuestion,
-} from "@/lib/mock-data";
+} from "@/lib/content-types";
 
 export function ExamBuilder({
   questions, onChange,

@@ -21,7 +21,7 @@ import { VideoPlayer } from "@/components/video-player";
 import { Reactions } from "@/components/reactions";
 import { VideoComments } from "@/components/comments";
 import { ExamBuilder } from "@/components/exam-builder";
-import { parseYouTubeId, type Unit, type Lesson, type LessonFile, type ExamQuestion } from "@/lib/mock-data";
+import { parseYouTubeId, type Unit, type Lesson, type LessonFile, type ExamQuestion } from "@/lib/content-types";
 import { GRADE_LEVELS, type GradeLevel } from "@/lib/grades";
 import { getCourse, saveCourse } from "@/lib/courses.functions";
 import { uploadStorageFile } from "@/lib/storage";

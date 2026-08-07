@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Json } from "@/integrations/supabase/types";
-import type { Course, ExamQuestion, ExamAttempt, LessonExam } from "./mock-data";
+import type { Course, ExamQuestion, ExamAttempt, LessonExam } from "./content-types";
 
 // === Schemas ===
 const courseInput = z.object({

@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { parseYouTubeId } from "@/lib/mock-data";
+import { parseYouTubeId } from "@/lib/content-types";
 
 /**
  * YouTube-backed video player with custom controls.
