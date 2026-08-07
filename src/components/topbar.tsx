@@ -1,20 +1,17 @@
 import { Bell } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { mockNotifications } from "@/lib/mock-data";
-import { useAppState } from "@/lib/app-state";
+import { listNotifications, markNotificationRead } from "@/lib/platform.functions";
 import { Badge } from "@/components/ui/badge";
 
 export function TopBar({ title }: { title: string }) {
-  const { announcements } = useAppState();
-  const items = [
-    ...mockNotifications,
-    ...announcements.map((a) => ({ id: a.id, text: a.text, time: a.createdAt, read: false })),
-  ];
+  const queryClient = useQueryClient();
+  const { data: items = [] } = useQuery({ queryKey: ["notifications"], queryFn: () => listNotifications() });
   const unread = items.filter((n) => !n.read).length;
 
   return (
@@ -39,9 +36,12 @@ export function TopBar({ title }: { title: string }) {
             <div className="p-4 text-center text-sm text-muted-foreground">لا توجد إشعارات</div>
           )}
           {items.map((n) => (
-            <DropdownMenuItem key={n.id} className="flex-col items-start gap-0.5">
-              <div className="text-sm">{n.text}</div>
-              <div className="text-xs text-muted-foreground">{n.time}</div>
+            <DropdownMenuItem key={n.id} className="flex-col items-start gap-0.5" onSelect={() => {
+              if (!n.read) void markNotificationRead({ data: { id: n.id } }).then(() => queryClient.invalidateQueries({ queryKey: ["notifications"] }));
+            }}>
+              <div className="text-sm font-medium">{n.title}</div>
+              {n.body && <div className="text-sm">{n.body}</div>}
+              <div className="text-xs text-muted-foreground">{new Date(n.created_at).toLocaleString("ar-EG")}</div>
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

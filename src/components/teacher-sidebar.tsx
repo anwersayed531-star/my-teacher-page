@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  LayoutDashboard, BookOpen, Files, FileQuestion, Users, Layers,
+  LayoutDashboard, BookOpen, Users, Layers,
   KeyRound, MessagesSquare, Megaphone, UserCog, UserRound,
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
@@ -13,8 +13,6 @@ const items = [
   { title: "الرئيسية", url: "/dashboard", icon: LayoutDashboard },
   { title: "الصفوف الدراسية", url: "/dashboard/grades", icon: Layers },
   { title: "الدورات", url: "/dashboard/courses", icon: BookOpen },
-  { title: "الملفات", url: "/dashboard/files", icon: Files },
-  { title: "الاختبارات", url: "/dashboard/exams/new", icon: FileQuestion },
   { title: "الطلاب", url: "/dashboard/students", icon: Users },
   { title: "أكواد الاشتراك", url: "/dashboard/codes", icon: KeyRound },
   { title: "الرسائل", url: "/dashboard/messages", icon: MessagesSquare },

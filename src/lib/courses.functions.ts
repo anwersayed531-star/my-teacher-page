@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Json } from "@/integrations/supabase/types";
-import type { Course, ExamQuestion, ExamAttempt, LessonExam } from "./mock-data";
+import type { Course, ExamQuestion, ExamAttempt, LessonExam } from "./content-types";
 
 // === Schemas ===
 const courseInput = z.object({
@@ -88,18 +88,26 @@ function toDbCourse(input: z.infer<typeof courseInput>) {
   };
 }
 
-function toCourse(row: any, units: any[] = []): Course {
+function toCourse(row: any, units: any[] = [], cover = row.cover_url ?? ""): Course {
   return {
     id: row.id,
     title: row.title,
     description: row.description ?? "",
-    cover: row.cover_url ?? "",
+    cover,
     isPaid: row.is_paid ?? false,
     price: row.price ?? undefined,
     studentsCount: row.students_count ?? 0,
     gradeLevel: row.grade_level ?? "",
     units: units,
   };
+}
+
+async function resolveStorageUrl(supabase: any, value: string | null | undefined) {
+  if (!value?.startsWith("storage://")) return value ?? "";
+  const match = value.match(/^storage:\/\/([^/]+)\/(.+)$/);
+  if (!match) return "";
+  const { data } = await supabase.storage.from(match[1]).createSignedUrl(match[2], 3600);
+  return data?.signedUrl ?? "";
 }
 
 function toUnit(row: any, lessons: any[] = []) {
@@ -122,7 +130,7 @@ function toLesson(row: any, videos: any[], files: any[], exams: any[]) {
       url: v.url,
       durationSec: v.duration_sec ?? undefined,
     })),
-    files: files.map((f) => ({
+     files: files.map((f) => ({
       id: f.id,
       name: f.name,
       kind: f.kind ?? "pdf",
@@ -238,7 +246,7 @@ export const listTeacherCourses = createServerFn({ method: "GET" })
       .eq("teacher_id", context.userId)
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return (data ?? []).map((row) => toCourse(row, []));
+    return Promise.all((data ?? []).map(async (row) => toCourse(row, [], await resolveStorageUrl(context.supabase, row.cover_url))));
   });
 
 export const listStudentCourses = createServerFn({ method: "GET" })
@@ -250,7 +258,7 @@ export const listStudentCourses = createServerFn({ method: "GET" })
       .eq("is_published", true)
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return (data ?? []).map((row) => toCourse(row, []));
+    return Promise.all((data ?? []).map(async (row) => toCourse(row, [], await resolveStorageUrl(context.supabase, row.cover_url))));
   });
 
 export const getCourse = createServerFn({ method: "GET" })
@@ -294,7 +302,10 @@ export const getCourse = createServerFn({ method: "GET" })
         context.supabase.from("exams").select("*").in("lesson_id", lessonIds),
       ]);
       videos = v ?? [];
-      files = f ?? [];
+      files = await Promise.all((f ?? []).map(async (row) => ({
+        ...row,
+        public_url: await resolveStorageUrl(context.supabase, row.storage_path || row.public_url),
+      })));
       exams = e ?? [];
     }
 
@@ -310,7 +321,7 @@ export const getCourse = createServerFn({ method: "GET" })
       return toUnit(u, unitLessons);
     });
 
-    return toCourse(courseRow, builtUnits);
+    return toCourse(courseRow, builtUnits, await resolveStorageUrl(context.supabase, courseRow.cover_url));
   });
 
 export const saveCourse = createServerFn({ method: "POST" })
@@ -388,7 +399,8 @@ export const saveCourse = createServerFn({ method: "POST" })
           lesson_id: lessonId,
           name: f.name,
           kind: f.kind,
-          public_url: f.url,
+           public_url: f.url.startsWith("storage://") ? null : f.url,
+           storage_path: f.url.startsWith("storage://") ? f.url.replace(/^storage:\/\/lesson-files\//, "") : null,
           size: f.size,
           created_by: context.userId,
         }));

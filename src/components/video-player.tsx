@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { parseYouTubeId, SAMPLE_YOUTUBE_ID } from "@/lib/mock-data";
+import { parseYouTubeId } from "@/lib/content-types";
 
 /**
  * YouTube-backed video player with custom controls.
@@ -52,7 +52,7 @@ function loadYT(): Promise<any> {
 }
 
 export function VideoPlayer({ src, title, storageKey, onTimeUpdate, onReady }: Props) {
-  const videoId = parseYouTubeId(src) || SAMPLE_YOUTUBE_ID;
+  const videoId = parseYouTubeId(src);
   const holderRef = useRef<HTMLDivElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
@@ -69,6 +69,7 @@ export function VideoPlayer({ src, title, storageKey, onTimeUpdate, onReady }: P
     let cancelled = false;
     let poll: ReturnType<typeof setInterval> | null = null;
 
+    if (!videoId) return;
     loadYT().then((YT) => {
       if (cancelled || !holderRef.current) return;
       playerRef.current = new YT.Player(holderRef.current, {

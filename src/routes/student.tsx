@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { StudentSidebar } from "@/components/student-sidebar";
-import { AppStateProvider } from "@/lib/app-state";
 import { AnnouncementBanner } from "@/components/announcement-banner";
 
 export const Route = createFileRoute("/student")({
@@ -11,8 +10,7 @@ export const Route = createFileRoute("/student")({
 
 function StudentLayout() {
   return (
-    <AppStateProvider>
-      <div dir="rtl" lang="ar" className="min-h-screen bg-background text-foreground">
+    <div dir="rtl" lang="ar" className="min-h-screen bg-background text-foreground">
         <AnnouncementBanner />
         <SidebarProvider>
           <div className="flex min-h-screen w-full">
@@ -22,7 +20,6 @@ function StudentLayout() {
             </div>
           </div>
         </SidebarProvider>
-      </div>
-    </AppStateProvider>
+    </div>
   );
 }
