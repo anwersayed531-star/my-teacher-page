@@ -285,13 +285,6 @@ export const listCodes = createServerFn({ method: "GET" })
     });
   });
 
-function randomCode() {
-  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let out = "";
-  for (let i = 0; i < 10; i++) out += alphabet[Math.floor(Math.random() * alphabet.length)];
-  return `${out.slice(0, 5)}-${out.slice(5)}`;
-}
-
 export const createCodes = createServerFn({ method: "POST" })
   .validator((data) =>
     z
@@ -304,6 +297,12 @@ export const createCodes = createServerFn({ method: "POST" })
   )
   .middleware([requireSupabaseAuth])
   .handler(async ({ context, data }) => {
+    const randomCode = () => {
+      const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let out = "";
+      for (let i = 0; i < 10; i++) out += alphabet[Math.floor(Math.random() * alphabet.length)];
+      return `${out.slice(0, 5)}-${out.slice(5)}`;
+    };
     const expires = new Date(Date.now() + data.durationDays * 86400000).toISOString();
     const rows = Array.from({ length: data.count }).map(() => ({
       code: randomCode(),
@@ -629,4 +628,96 @@ export const listAssistants = createServerFn({ method: "GET" })
         since: r.created_at,
       };
     });
+  });
+
+// ==================== الإشعارات والتفاعل ====================
+
+export const listNotifications = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
+      .from("notifications")
+      .select("id, title, body, link, read, created_at")
+      .eq("user_id", context.userId)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    return data ?? [];
+  });
+
+export const markNotificationRead = createServerFn({ method: "POST" })
+  .validator((data) => z.object({ id: z.string() }).parse(data))
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { error } = await context.supabase.from("notifications").update({ read: true }).eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
+
+export const listVideoComments = createServerFn({ method: "GET" })
+  .validator((data) => z.object({ videoId: z.string() }).parse(data))
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { data: rows, error } = await context.supabase.from("video_comments").select("*").eq("video_id", data.videoId).order("created_at", { ascending: false });
+    if (error) throw error;
+    const ids = [...new Set((rows ?? []).map((r) => r.author_id))];
+    const { data: profiles } = ids.length ? await context.supabase.from("profiles").select("id, full_name").in("id", ids) : { data: [] as any[] };
+    const { data: roles } = ids.length ? await context.supabase.from("user_roles").select("user_id, role").in("user_id", ids) : { data: [] as any[] };
+    return (rows ?? []).map((r) => ({
+      id: r.id,
+      authorId: r.author_id,
+      authorName: (profiles ?? []).find((p: any) => p.id === r.author_id)?.full_name ?? "مستخدم",
+      authorRole: (roles ?? []).find((x: any) => x.user_id === r.author_id)?.role ?? "student",
+      text: r.text,
+      timestampSec: r.timestamp_sec,
+      createdAt: r.created_at,
+      mine: r.author_id === context.userId,
+    }));
+  });
+
+export const addVideoComment = createServerFn({ method: "POST" })
+  .validator((data) => z.object({ videoId: z.string(), text: z.string().min(1), timestampSec: z.number().nullable() }).parse(data))
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { error } = await context.supabase.from("video_comments").insert({ video_id: data.videoId, author_id: context.userId, text: data.text, timestamp_sec: data.timestampSec });
+    if (error) throw error;
+    return { ok: true };
+  });
+
+export const deleteVideoComment = createServerFn({ method: "POST" })
+  .validator((data) => z.object({ id: z.string() }).parse(data))
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { error } = await context.supabase.from("video_comments").delete().eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
+
+export const listReactions = createServerFn({ method: "GET" })
+  .validator((data) => z.object({ targetId: z.string() }).parse(data))
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { data: rows, error } = await context.supabase.from("reactions").select("user_id, type").eq("target_id", data.targetId);
+    if (error) throw error;
+    const ids = [...new Set((rows ?? []).map((r) => r.user_id))];
+    const { data: profiles } = ids.length ? await context.supabase.from("profiles").select("id, full_name").in("id", ids) : { data: [] as any[] };
+    return (rows ?? []).map((r) => ({ userId: r.user_id, userName: (profiles ?? []).find((p: any) => p.id === r.user_id)?.full_name ?? "مستخدم", type: r.type, mine: r.user_id === context.userId }));
+  });
+
+export const toggleReaction = createServerFn({ method: "POST" })
+  .validator((data) => z.object({ targetId: z.string(), type: z.enum(["like", "love", "haha", "angry", "sad"]) }).parse(data))
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context, data }) => {
+    const { data: existing } = await context.supabase.from("reactions").select("id, type").eq("target_id", data.targetId).eq("user_id", context.userId).maybeSingle();
+    if (existing?.type === data.type) {
+      const { error } = await context.supabase.from("reactions").delete().eq("id", existing.id);
+      if (error) throw error;
+    } else if (existing) {
+      const { error } = await context.supabase.from("reactions").update({ type: data.type }).eq("id", existing.id);
+      if (error) throw error;
+    } else {
+      const { error } = await context.supabase.from("reactions").insert({ target_id: data.targetId, user_id: context.userId, type: data.type });
+      if (error) throw error;
+    }
+    return { ok: true };
   });
