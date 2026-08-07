@@ -22,7 +22,6 @@ import { Route as StudentDashboardRouteImport } from './routes/student.dashboard
 import { Route as DashboardProfileRouteImport } from './routes/dashboard.profile'
 import { Route as DashboardMessagesRouteImport } from './routes/dashboard.messages'
 import { Route as DashboardGradesRouteImport } from './routes/dashboard.grades'
-import { Route as DashboardFilesRouteImport } from './routes/dashboard.files'
 import { Route as DashboardCodesRouteImport } from './routes/dashboard.codes'
 import { Route as DashboardAnnouncementsRouteImport } from './routes/dashboard.announcements'
 import { Route as DashboardStudentsIndexRouteImport } from './routes/dashboard.students.index'
@@ -31,7 +30,6 @@ import { Route as DashboardAssistantsIndexRouteImport } from './routes/dashboard
 import { Route as StudentExamsIdRouteImport } from './routes/student.exams.$id'
 import { Route as StudentCoursesIdRouteImport } from './routes/student.courses.$id'
 import { Route as DashboardStudentsIdRouteImport } from './routes/dashboard.students.$id'
-import { Route as DashboardExamsNewRouteImport } from './routes/dashboard.exams.new'
 import { Route as DashboardCoursesIdRouteImport } from './routes/dashboard.courses.$id'
 import { Route as DashboardAssistantsPermissionsRouteImport } from './routes/dashboard.assistants.permissions'
 import { Route as DashboardExamsIdStatsRouteImport } from './routes/dashboard.exams.$id.stats'
@@ -102,11 +100,6 @@ const DashboardGradesRoute = DashboardGradesRouteImport.update({
   path: '/grades',
   getParentRoute: () => DashboardRoute,
 } as any)
-const DashboardFilesRoute = DashboardFilesRouteImport.update({
-  id: '/files',
-  path: '/files',
-  getParentRoute: () => DashboardRoute,
-} as any)
 const DashboardCodesRoute = DashboardCodesRouteImport.update({
   id: '/codes',
   path: '/codes',
@@ -148,11 +141,6 @@ const DashboardStudentsIdRoute = DashboardStudentsIdRouteImport.update({
   path: '/students/$id',
   getParentRoute: () => DashboardRoute,
 } as any)
-const DashboardExamsNewRoute = DashboardExamsNewRouteImport.update({
-  id: '/exams/new',
-  path: '/exams/new',
-  getParentRoute: () => DashboardRoute,
-} as any)
 const DashboardCoursesIdRoute = DashboardCoursesIdRouteImport.update({
   id: '/courses/$id',
   path: '/courses/$id',
@@ -183,7 +171,6 @@ export interface FileRoutesByFullPath {
   '/student': typeof StudentRouteWithChildren
   '/dashboard/announcements': typeof DashboardAnnouncementsRoute
   '/dashboard/codes': typeof DashboardCodesRoute
-  '/dashboard/files': typeof DashboardFilesRoute
   '/dashboard/grades': typeof DashboardGradesRoute
   '/dashboard/messages': typeof DashboardMessagesRoute
   '/dashboard/profile': typeof DashboardProfileRoute
@@ -194,7 +181,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/assistants/permissions': typeof DashboardAssistantsPermissionsRoute
   '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
-  '/dashboard/exams/new': typeof DashboardExamsNewRoute
   '/dashboard/students/$id': typeof DashboardStudentsIdRoute
   '/student/courses/$id': typeof StudentCoursesIdRoute
   '/student/exams/$id': typeof StudentExamsIdRoute
@@ -211,7 +197,6 @@ export interface FileRoutesByTo {
   '/student': typeof StudentRouteWithChildren
   '/dashboard/announcements': typeof DashboardAnnouncementsRoute
   '/dashboard/codes': typeof DashboardCodesRoute
-  '/dashboard/files': typeof DashboardFilesRoute
   '/dashboard/grades': typeof DashboardGradesRoute
   '/dashboard/messages': typeof DashboardMessagesRoute
   '/dashboard/profile': typeof DashboardProfileRoute
@@ -222,7 +207,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/assistants/permissions': typeof DashboardAssistantsPermissionsRoute
   '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
-  '/dashboard/exams/new': typeof DashboardExamsNewRoute
   '/dashboard/students/$id': typeof DashboardStudentsIdRoute
   '/student/courses/$id': typeof StudentCoursesIdRoute
   '/student/exams/$id': typeof StudentExamsIdRoute
@@ -241,7 +225,6 @@ export interface FileRoutesById {
   '/student': typeof StudentRouteWithChildren
   '/dashboard/announcements': typeof DashboardAnnouncementsRoute
   '/dashboard/codes': typeof DashboardCodesRoute
-  '/dashboard/files': typeof DashboardFilesRoute
   '/dashboard/grades': typeof DashboardGradesRoute
   '/dashboard/messages': typeof DashboardMessagesRoute
   '/dashboard/profile': typeof DashboardProfileRoute
@@ -252,7 +235,6 @@ export interface FileRoutesById {
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/assistants/permissions': typeof DashboardAssistantsPermissionsRoute
   '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
-  '/dashboard/exams/new': typeof DashboardExamsNewRoute
   '/dashboard/students/$id': typeof DashboardStudentsIdRoute
   '/student/courses/$id': typeof StudentCoursesIdRoute
   '/student/exams/$id': typeof StudentExamsIdRoute
@@ -272,7 +254,6 @@ export interface FileRouteTypes {
     | '/student'
     | '/dashboard/announcements'
     | '/dashboard/codes'
-    | '/dashboard/files'
     | '/dashboard/grades'
     | '/dashboard/messages'
     | '/dashboard/profile'
@@ -283,7 +264,6 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/dashboard/assistants/permissions'
     | '/dashboard/courses/$id'
-    | '/dashboard/exams/new'
     | '/dashboard/students/$id'
     | '/student/courses/$id'
     | '/student/exams/$id'
@@ -300,7 +280,6 @@ export interface FileRouteTypes {
     | '/student'
     | '/dashboard/announcements'
     | '/dashboard/codes'
-    | '/dashboard/files'
     | '/dashboard/grades'
     | '/dashboard/messages'
     | '/dashboard/profile'
@@ -311,7 +290,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/assistants/permissions'
     | '/dashboard/courses/$id'
-    | '/dashboard/exams/new'
     | '/dashboard/students/$id'
     | '/student/courses/$id'
     | '/student/exams/$id'
@@ -329,7 +307,6 @@ export interface FileRouteTypes {
     | '/student'
     | '/dashboard/announcements'
     | '/dashboard/codes'
-    | '/dashboard/files'
     | '/dashboard/grades'
     | '/dashboard/messages'
     | '/dashboard/profile'
@@ -340,7 +317,6 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/dashboard/assistants/permissions'
     | '/dashboard/courses/$id'
-    | '/dashboard/exams/new'
     | '/dashboard/students/$id'
     | '/student/courses/$id'
     | '/student/exams/$id'
@@ -452,13 +428,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardGradesRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/dashboard/files': {
-      id: '/dashboard/files'
-      path: '/files'
-      fullPath: '/dashboard/files'
-      preLoaderRoute: typeof DashboardFilesRouteImport
-      parentRoute: typeof DashboardRoute
-    }
     '/dashboard/codes': {
       id: '/dashboard/codes'
       path: '/codes'
@@ -515,13 +484,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardStudentsIdRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/dashboard/exams/new': {
-      id: '/dashboard/exams/new'
-      path: '/exams/new'
-      fullPath: '/dashboard/exams/new'
-      preLoaderRoute: typeof DashboardExamsNewRouteImport
-      parentRoute: typeof DashboardRoute
-    }
     '/dashboard/courses/$id': {
       id: '/dashboard/courses/$id'
       path: '/courses/$id'
@@ -556,14 +518,12 @@ declare module '@tanstack/react-router' {
 interface DashboardRouteChildren {
   DashboardAnnouncementsRoute: typeof DashboardAnnouncementsRoute
   DashboardCodesRoute: typeof DashboardCodesRoute
-  DashboardFilesRoute: typeof DashboardFilesRoute
   DashboardGradesRoute: typeof DashboardGradesRoute
   DashboardMessagesRoute: typeof DashboardMessagesRoute
   DashboardProfileRoute: typeof DashboardProfileRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardAssistantsPermissionsRoute: typeof DashboardAssistantsPermissionsRoute
   DashboardCoursesIdRoute: typeof DashboardCoursesIdRoute
-  DashboardExamsNewRoute: typeof DashboardExamsNewRoute
   DashboardStudentsIdRoute: typeof DashboardStudentsIdRoute
   DashboardAssistantsIndexRoute: typeof DashboardAssistantsIndexRoute
   DashboardCoursesIndexRoute: typeof DashboardCoursesIndexRoute
@@ -575,14 +535,12 @@ interface DashboardRouteChildren {
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAnnouncementsRoute: DashboardAnnouncementsRoute,
   DashboardCodesRoute: DashboardCodesRoute,
-  DashboardFilesRoute: DashboardFilesRoute,
   DashboardGradesRoute: DashboardGradesRoute,
   DashboardMessagesRoute: DashboardMessagesRoute,
   DashboardProfileRoute: DashboardProfileRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardAssistantsPermissionsRoute: DashboardAssistantsPermissionsRoute,
   DashboardCoursesIdRoute: DashboardCoursesIdRoute,
-  DashboardExamsNewRoute: DashboardExamsNewRoute,
   DashboardStudentsIdRoute: DashboardStudentsIdRoute,
   DashboardAssistantsIndexRoute: DashboardAssistantsIndexRoute,
   DashboardCoursesIndexRoute: DashboardCoursesIndexRoute,

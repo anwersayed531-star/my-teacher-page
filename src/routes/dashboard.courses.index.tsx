@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/select";
 import { listTeacherCourses } from "@/lib/courses.functions";
 import { GRADE_LEVELS } from "@/lib/grades";
-import { useAppState } from "@/lib/app-state";
 import { useTeacherGrades } from "@/lib/teacher-grades";
 import { Plus, BookOpen, Loader2 } from "lucide-react";
 
@@ -19,7 +18,7 @@ export const Route = createFileRoute("/dashboard/courses/")({
 });
 
 function CoursesList() {
-  const { selectedGrade, setSelectedGrade } = useAppState();
+  const [selectedGrade, setSelectedGrade] = useState<string>("all");
   const { gradeNames } = useTeacherGrades();
   const { data: courses = [], isLoading } = useQuery({
     queryKey: ["teacher-courses"],
