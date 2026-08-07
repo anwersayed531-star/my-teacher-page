@@ -21,10 +21,7 @@ import { VideoPlayer } from "@/components/video-player";
 import { Reactions } from "@/components/reactions";
 import { VideoComments } from "@/components/comments";
 import { ExamBuilder } from "@/components/exam-builder";
-import {
-  SAMPLE_VIDEO_URL, parseYouTubeId,
-  type Unit, type Lesson, type LessonFile, type ExamQuestion,
-} from "@/lib/mock-data";
+import { parseYouTubeId, type Unit, type Lesson, type LessonFile, type ExamQuestion } from "@/lib/mock-data";
 import { GRADE_LEVELS, type GradeLevel } from "@/lib/grades";
 import { getCourse, saveCourse } from "@/lib/courses.functions";
 import { uploadStorageFile } from "@/lib/storage";
@@ -387,7 +384,7 @@ function LessonBlock({
 }) {
   const [addVideoOpen, setAddVideoOpen] = useState(false);
   const [vTitle, setVTitle] = useState("");
-  const [vUrl, setVUrl] = useState(SAMPLE_VIDEO_URL);
+  const [vUrl, setVUrl] = useState("");
 
   const [addFileOpen, setAddFileOpen] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -532,7 +529,7 @@ function LessonBlock({
                 onClick={() => {
                   if (!vTitle || !vUrl || !parseYouTubeId(vUrl)) return;
                   onUpdate((l) => ({ ...l, videos: [...l.videos, { id: `v${Date.now()}`, title: vTitle, url: vUrl }] }));
-                  setVTitle(""); setVUrl(SAMPLE_VIDEO_URL); setAddVideoOpen(false);
+                  setVTitle(""); setVUrl(""); setAddVideoOpen(false);
                 }}
               >
                 إضافة
