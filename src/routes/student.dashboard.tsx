@@ -3,13 +3,10 @@ import { TopBar } from "@/components/topbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { listStudentCourses } from "@/lib/courses.functions";
-import { GRADE_LEVELS } from "@/lib/grades";
-import { useAppState } from "@/lib/app-state";
+import { myEnrollments } from "@/lib/platform.functions";
+import { useAuth } from "@/lib/auth";
 import { BookOpen, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/student/dashboard")({
@@ -17,14 +14,16 @@ export const Route = createFileRoute("/student/dashboard")({
 });
 
 function StudentDashboard() {
-  const { studentGrade, setStudentGrade } = useAppState();
+  const { profile } = useAuth();
   const { data: courses = [], isLoading } = useQuery({
     queryKey: ["student-courses"],
     queryFn: () => listStudentCourses(),
   });
+  const { data: enrolledIds = [] } = useQuery({ queryKey: ["my-enrollments"], queryFn: () => myEnrollments() });
+  const studentGrade = profile?.grade ?? "";
   const gradeCourses = courses.filter((c) => c.gradeLevel === studentGrade);
-  const subscribed = gradeCourses.filter((c) => !c.isPaid);
-  const browsable = gradeCourses.filter((c) => c.isPaid);
+  const subscribed = gradeCourses.filter((c) => !c.isPaid || enrolledIds.includes(c.id));
+  const browsable = gradeCourses.filter((c) => c.isPaid && !enrolledIds.includes(c.id));
 
   return (
     <>
@@ -39,12 +38,6 @@ function StudentDashboard() {
               <div className="text-sm text-muted-foreground">صفك الدراسي</div>
               <div className="font-semibold">{studentGrade}</div>
             </div>
-            <Select value={studentGrade} onValueChange={(v) => setStudentGrade(v as any)}>
-              <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {GRADE_LEVELS.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
-              </SelectContent>
-            </Select>
           </CardContent>
         </Card>
 
@@ -58,9 +51,7 @@ function StudentDashboard() {
             )}
             {subscribed.map((c) => (
               <Card key={c.id} className="overflow-hidden">
-                <div className="flex h-28 items-center justify-center bg-gradient-to-br from-primary/20 to-accent/30">
-                  <BookOpen className="h-10 w-10 text-primary" />
-                </div>
+                {c.cover ? <img src={c.cover} alt={c.title} className="h-28 w-full object-cover" /> : <div className="flex h-28 items-center justify-center bg-muted"><BookOpen className="h-10 w-10 text-primary" /></div>}
                 <CardContent className="space-y-2 pt-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold">{c.title}</h3>
@@ -85,9 +76,7 @@ function StudentDashboard() {
             )}
             {browsable.map((c) => (
               <Card key={c.id} className="overflow-hidden">
-                <div className="flex h-28 items-center justify-center bg-gradient-to-br from-secondary to-muted">
-                  <BookOpen className="h-10 w-10 text-muted-foreground" />
-                </div>
+                {c.cover ? <img src={c.cover} alt={c.title} className="h-28 w-full object-cover" /> : <div className="flex h-28 items-center justify-center bg-muted"><BookOpen className="h-10 w-10 text-muted-foreground" /></div>}
                 <CardContent className="space-y-2 pt-4">
                   <div className="flex items-center justify-between"><h3 className="font-bold">{c.title}</h3>
                     <Badge variant="secondary">{c.isPaid ? `${c.price} ج.م` : "مجاني"}</Badge>

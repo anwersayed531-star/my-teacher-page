@@ -16,6 +16,7 @@ import { VideoPlayer } from "@/components/video-player";
 import { Reactions } from "@/components/reactions";
 import { VideoComments } from "@/components/comments";
 import { getCourse } from "@/lib/courses.functions";
+import { myEnrollments, redeemSubscriptionCode } from "@/lib/platform.functions";
 import {
   Lock, Video, FileText, FileQuestion, ChevronDown, Circle, KeyRound, Play, Loader2,
 } from "lucide-react";
@@ -24,27 +25,29 @@ export const Route = createFileRoute("/student/courses/$id")({
   component: StudentCourse,
 });
 
-type RedeemStatus = null | "success" | "invalid" | "used";
-
 function StudentCourse() {
   const { id } = useParams({ from: "/student/courses/$id" });
   const { data: course, isLoading } = useQuery({
     queryKey: ["course", id],
     queryFn: () => getCourse({ data: { courseId: id } }),
   });
-  const [redeemed, setRedeemed] = useState(false);
-  const subscribed = !!course && (!course.isPaid || redeemed);
+  const { data: enrollmentIds = [], refetch: refetchEnrollments } = useQuery({ queryKey: ["my-enrollments"], queryFn: () => myEnrollments() });
+  const subscribed = !!course && (!course.isPaid || enrollmentIds.includes(id));
   const [codeOpen, setCodeOpen] = useState(false);
   const [code, setCode] = useState("");
-  const [status, setStatus] = useState<RedeemStatus>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const [playing, setPlaying] = useState<{ id: string; title: string; url: string } | null>(null);
   const getTimeRef = useRef<() => number>(() => 0);
 
-  const redeem = () => {
-    // TODO: connect to Supabase — single-use code redemption; grants lifetime access.
-    if (code.trim().toUpperCase() === "VALID") { setStatus("success"); setRedeemed(true); }
-    else if (code.trim().toUpperCase() === "USED") setStatus("used");
-    else setStatus("invalid");
+  const redeem = async () => {
+    try {
+      const result = await redeemSubscriptionCode({ data: { code } });
+      if (result.courseId !== id) throw new Error("الكود مخصص لدورة أخرى.");
+      await refetchEnrollments();
+      setStatus("success");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "الكود غير صالح.");
+    }
   };
 
   if (isLoading || !course) {
@@ -90,10 +93,8 @@ function StudentCourse() {
                     </div>
                     <Input placeholder="أدخل الكود هنا" value={code} onChange={(e) => setCode(e.target.value)} />
                     {status === "success" && <div className="rounded-md bg-primary/10 p-3 text-sm text-primary">تم قبول الكود — تم فتح الدورة!</div>}
-                    {status === "invalid" && <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">كود غير صالح.</div>}
-                    {status === "used" && <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">هذا الكود مستخدم من قبل.</div>}
+                    {status && status !== "success" && <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{status}</div>}
                     <Button onClick={redeem} className="w-full rounded-full">تفعيل الكود</Button>
-                    <p className="text-xs text-muted-foreground">جرّب: VALID / USED / أي نص آخر</p>
                   </div>
                 </DialogContent>
               </Dialog>
