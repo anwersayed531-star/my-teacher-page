@@ -14,153 +14,49 @@ export type Database = {
   }
   public: {
     Tables: {
-      announcements: {
-        Row: {
-          body: string
-          created_at: string
-          grade: string | null
-          id: string
-          kind: string
-          teacher_id: string
-          title: string
-        }
-        Insert: {
-          body?: string
-          created_at?: string
-          grade?: string | null
-          id?: string
-          kind?: string
-          teacher_id: string
-          title: string
-        }
-        Update: {
-          body?: string
-          created_at?: string
-          grade?: string | null
-          id?: string
-          kind?: string
-          teacher_id?: string
-          title?: string
-        }
-        Relationships: []
-      }
       courses: {
         Row: {
-          cover_url: string | null
+          cover_url: string
           created_at: string
-          description: string | null
-          grade_level: string
+          description: string
+          grade: string
           id: string
-          is_paid: boolean
           is_published: boolean
-          price: number | null
-          students_count: number
+          sort_order: number
           teacher_id: string
           title: string
           updated_at: string
         }
         Insert: {
-          cover_url?: string | null
+          cover_url?: string
           created_at?: string
-          description?: string | null
-          grade_level?: string
+          description?: string
+          grade: string
           id?: string
-          is_paid?: boolean
           is_published?: boolean
-          price?: number | null
-          students_count?: number
+          sort_order?: number
           teacher_id: string
           title: string
           updated_at?: string
         }
         Update: {
-          cover_url?: string | null
+          cover_url?: string
           created_at?: string
-          description?: string | null
-          grade_level?: string
+          description?: string
+          grade?: string
           id?: string
-          is_paid?: boolean
           is_published?: boolean
-          price?: number | null
-          students_count?: number
+          sort_order?: number
           teacher_id?: string
           title?: string
           updated_at?: string
         }
-        Relationships: []
-      }
-      enrollments: {
-        Row: {
-          course_id: string
-          created_at: string
-          id: string
-          source: string
-          student_id: string
-        }
-        Insert: {
-          course_id: string
-          created_at?: string
-          id?: string
-          source?: string
-          student_id: string
-        }
-        Update: {
-          course_id?: string
-          created_at?: string
-          id?: string
-          source?: string
-          student_id?: string
-        }
         Relationships: [
           {
-            foreignKeyName: "enrollments_course_id_fkey"
-            columns: ["course_id"]
+            foreignKeyName: "courses_teacher_id_fkey"
+            columns: ["teacher_id"]
             isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      exam_attempts: {
-        Row: {
-          answers: Json
-          earned: number | null
-          exam_id: string
-          id: string
-          score_pct: number | null
-          student_id: string
-          submitted_at: string
-          time_sec: number | null
-          total: number | null
-        }
-        Insert: {
-          answers?: Json
-          earned?: number | null
-          exam_id: string
-          id?: string
-          score_pct?: number | null
-          student_id: string
-          submitted_at?: string
-          time_sec?: number | null
-          total?: number | null
-        }
-        Update: {
-          answers?: Json
-          earned?: number | null
-          exam_id?: string
-          id?: string
-          score_pct?: number | null
-          student_id?: string
-          submitted_at?: string
-          time_sec?: number | null
-          total?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "exam_attempts_exam_id_fkey"
-            columns: ["exam_id"]
-            isOneToOne: false
-            referencedRelation: "exams"
+            referencedRelation: "teachers"
             referencedColumns: ["id"]
           },
         ]
@@ -168,42 +64,42 @@ export type Database = {
       exams: {
         Row: {
           created_at: string
-          created_by: string | null
           duration_min: number
           id: string
           is_published: boolean
           lesson_id: string
           passing_pct: number
           questions: Json
-          shuffle_answers: boolean
           shuffle_questions: boolean
+          sort_order: number
           title: string
+          updated_at: string
         }
         Insert: {
           created_at?: string
-          created_by?: string | null
           duration_min?: number
           id?: string
           is_published?: boolean
           lesson_id: string
           passing_pct?: number
           questions?: Json
-          shuffle_answers?: boolean
           shuffle_questions?: boolean
+          sort_order?: number
           title: string
+          updated_at?: string
         }
         Update: {
           created_at?: string
-          created_by?: string | null
           duration_min?: number
           id?: string
           is_published?: boolean
           lesson_id?: string
           passing_pct?: number
           questions?: Json
-          shuffle_answers?: boolean
           shuffle_questions?: boolean
+          sort_order?: number
           title?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -218,36 +114,33 @@ export type Database = {
       lesson_files: {
         Row: {
           created_at: string
-          created_by: string | null
           id: string
-          kind: string | null
           lesson_id: string
           name: string
-          public_url: string | null
           size: number | null
+          sort_order: number
           storage_path: string | null
+          url: string
         }
         Insert: {
           created_at?: string
-          created_by?: string | null
           id?: string
-          kind?: string | null
           lesson_id: string
           name: string
-          public_url?: string | null
           size?: number | null
+          sort_order?: number
           storage_path?: string | null
+          url: string
         }
         Update: {
           created_at?: string
-          created_by?: string | null
           id?: string
-          kind?: string | null
           lesson_id?: string
           name?: string
-          public_url?: string | null
           size?: number | null
+          sort_order?: number
           storage_path?: string | null
+          url?: string
         }
         Relationships: [
           {
@@ -261,18 +154,21 @@ export type Database = {
       }
       lessons: {
         Row: {
+          created_at: string
           id: string
           sort_order: number
           title: string
           unit_id: string
         }
         Insert: {
+          created_at?: string
           id?: string
           sort_order?: number
           title: string
           unit_id: string
         }
         Update: {
+          created_at?: string
           id?: string
           sort_order?: number
           title?: string
@@ -287,66 +183,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      messages: {
-        Row: {
-          body: string
-          created_at: string
-          grade: string | null
-          id: string
-          read_at: string | null
-          recipient_id: string | null
-          sender_id: string
-        }
-        Insert: {
-          body: string
-          created_at?: string
-          grade?: string | null
-          id?: string
-          read_at?: string | null
-          recipient_id?: string | null
-          sender_id: string
-        }
-        Update: {
-          body?: string
-          created_at?: string
-          grade?: string | null
-          id?: string
-          read_at?: string | null
-          recipient_id?: string | null
-          sender_id?: string
-        }
-        Relationships: []
-      }
-      notifications: {
-        Row: {
-          body: string | null
-          created_at: string
-          id: string
-          link: string | null
-          read: boolean
-          title: string
-          user_id: string
-        }
-        Insert: {
-          body?: string | null
-          created_at?: string
-          id?: string
-          link?: string | null
-          read?: boolean
-          title: string
-          user_id: string
-        }
-        Update: {
-          body?: string | null
-          created_at?: string
-          id?: string
-          link?: string | null
-          read?: boolean
-          title?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       profiles: {
         Row: {
@@ -387,119 +223,89 @@ export type Database = {
         }
         Relationships: []
       }
-      reactions: {
-        Row: {
-          created_at: string
-          id: string
-          target_id: string
-          type: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          target_id: string
-          type: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          target_id?: string
-          type?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      subscription_codes: {
-        Row: {
-          code: string
-          course_id: string
-          created_at: string
-          disabled: boolean
-          duration_days: number
-          expires_at: string | null
-          id: string
-          teacher_id: string
-          used: boolean
-          used_at: string | null
-          used_by: string | null
-        }
-        Insert: {
-          code: string
-          course_id: string
-          created_at?: string
-          disabled?: boolean
-          duration_days?: number
-          expires_at?: string | null
-          id?: string
-          teacher_id: string
-          used?: boolean
-          used_at?: string | null
-          used_by?: string | null
-        }
-        Update: {
-          code?: string
-          course_id?: string
-          created_at?: string
-          disabled?: boolean
-          duration_days?: number
-          expires_at?: string | null
-          id?: string
-          teacher_id?: string
-          used?: boolean
-          used_at?: string | null
-          used_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "subscription_codes_course_id_fkey"
-            columns: ["course_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       teacher_grades: {
         Row: {
           created_at: string
           grade: string
           id: string
-          sort_order: number
           teacher_id: string
         }
         Insert: {
           created_at?: string
           grade: string
           id?: string
-          sort_order?: number
           teacher_id: string
         }
         Update: {
           created_at?: string
           grade?: string
           id?: string
-          sort_order?: number
           teacher_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teacher_grades_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teachers: {
+        Row: {
+          bio: string
+          created_at: string
+          id: string
+          is_published: boolean
+          name: string
+          photo_url: string
+          sort_order: number
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          bio?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          name: string
+          photo_url?: string
+          sort_order?: number
+          subject?: string
+          updated_at?: string
+        }
+        Update: {
+          bio?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          name?: string
+          photo_url?: string
+          sort_order?: number
+          subject?: string
+          updated_at?: string
         }
         Relationships: []
       }
       units: {
         Row: {
           course_id: string
+          created_at: string
           id: string
           sort_order: number
           title: string
         }
         Insert: {
           course_id: string
+          created_at?: string
           id?: string
           sort_order?: number
           title: string
         }
         Update: {
           course_id?: string
+          created_at?: string
           id?: string
           sort_order?: number
           title?: string
@@ -535,43 +341,9 @@ export type Database = {
         }
         Relationships: []
       }
-      video_comments: {
-        Row: {
-          author_id: string
-          created_at: string
-          id: string
-          text: string
-          timestamp_sec: number | null
-          video_id: string
-        }
-        Insert: {
-          author_id: string
-          created_at?: string
-          id?: string
-          text: string
-          timestamp_sec?: number | null
-          video_id: string
-        }
-        Update: {
-          author_id?: string
-          created_at?: string
-          id?: string
-          text?: string
-          timestamp_sec?: number | null
-          video_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "video_comments_video_id_fkey"
-            columns: ["video_id"]
-            isOneToOne: false
-            referencedRelation: "videos"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       videos: {
         Row: {
+          created_at: string
           duration_sec: number | null
           id: string
           lesson_id: string
@@ -580,6 +352,7 @@ export type Database = {
           url: string
         }
         Insert: {
+          created_at?: string
           duration_sec?: number | null
           id?: string
           lesson_id: string
@@ -588,6 +361,7 @@ export type Database = {
           url: string
         }
         Update: {
+          created_at?: string
           duration_sec?: number | null
           id?: string
           lesson_id?: string
@@ -610,8 +384,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      can_view_course: { Args: { _course_id: string }; Returns: boolean }
-      can_view_lesson: { Args: { _lesson_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -619,17 +391,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_enrolled: { Args: { _course_id: string }; Returns: boolean }
+      is_admin: { Args: never; Returns: boolean }
       is_teacher: { Args: never; Returns: boolean }
-      my_grade: { Args: never; Returns: string }
-      platform_teacher: {
-        Args: never
-        Returns: {
-          full_name: string
-          id: string
-        }[]
-      }
-      redeem_code: { Args: { _code: string }; Returns: string }
     }
     Enums: {
       app_role: "teacher" | "student" | "assistant"
