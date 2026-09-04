@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as GradesGradeRouteImport } from './routes/grades.$grade'
 import { Route as DashboardCoursesIndexRouteImport } from './routes/dashboard.courses.index'
 import { Route as DashboardCoursesIdRouteImport } from './routes/dashboard.courses.$id'
 
@@ -36,6 +37,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const GradesGradeRoute = GradesGradeRouteImport.update({
+  id: '/grades/$grade',
+  path: '/grades/$grade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardCoursesIndexRoute = DashboardCoursesIndexRouteImport.update({
   id: '/courses/',
   path: '/courses/',
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
+  '/grades/$grade': typeof GradesGradeRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
   '/dashboard/courses/': typeof DashboardCoursesIndexRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/grades/$grade': typeof GradesGradeRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
   '/dashboard/courses': typeof DashboardCoursesIndexRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
+  '/grades/$grade': typeof GradesGradeRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
   '/dashboard/courses/': typeof DashboardCoursesIndexRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/grades/$grade'
     | '/dashboard/'
     | '/dashboard/courses/$id'
     | '/dashboard/courses/'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/grades/$grade'
     | '/dashboard'
     | '/dashboard/courses/$id'
     | '/dashboard/courses'
@@ -92,6 +103,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/grades/$grade'
     | '/dashboard/'
     | '/dashboard/courses/$id'
     | '/dashboard/courses/'
@@ -101,6 +113,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
+  GradesGradeRoute: typeof GradesGradeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -132,6 +145,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
+    }
+    '/grades/$grade': {
+      id: '/grades/$grade'
+      path: '/grades/$grade'
+      fullPath: '/grades/$grade'
+      preLoaderRoute: typeof GradesGradeRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/courses/': {
       id: '/dashboard/courses/'
@@ -170,6 +190,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRouteWithChildren,
   LoginRoute: LoginRoute,
+  GradesGradeRoute: GradesGradeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
