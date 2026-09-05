@@ -19,6 +19,7 @@ import { Route as ExamsExamIdRouteImport } from './routes/exams.$examId'
 import { Route as DashboardTeachersRouteImport } from './routes/dashboard.teachers'
 import { Route as CoursesCourseIdRouteImport } from './routes/courses.$courseId'
 import { Route as DashboardCoursesIndexRouteImport } from './routes/dashboard.courses.index'
+import { Route as DashboardCoursesIdRouteImport } from './routes/dashboard.courses.$id'
 import { Route as GradesGradeTeachersTeacherIdRouteImport } from './routes/grades.$grade.teachers.$teacherId'
 
 const MeRoute = MeRouteImport.update({
@@ -71,6 +72,11 @@ const DashboardCoursesIndexRoute = DashboardCoursesIndexRouteImport.update({
   path: '/courses/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardCoursesIdRoute = DashboardCoursesIdRouteImport.update({
+  id: '/courses/$id',
+  path: '/courses/$id',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const GradesGradeTeachersTeacherIdRoute =
   GradesGradeTeachersTeacherIdRouteImport.update({
     id: '/teachers/$teacherId',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/exams/$examId': typeof ExamsExamIdRoute
   '/grades/$grade': typeof GradesGradeRouteWithChildren
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
   '/dashboard/courses/': typeof DashboardCoursesIndexRoute
   '/grades/$grade/teachers/$teacherId': typeof GradesGradeTeachersTeacherIdRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/exams/$examId': typeof ExamsExamIdRoute
   '/grades/$grade': typeof GradesGradeRouteWithChildren
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
   '/dashboard/courses': typeof DashboardCoursesIndexRoute
   '/grades/$grade/teachers/$teacherId': typeof GradesGradeTeachersTeacherIdRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/exams/$examId': typeof ExamsExamIdRoute
   '/grades/$grade': typeof GradesGradeRouteWithChildren
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
   '/dashboard/courses/': typeof DashboardCoursesIndexRoute
   '/grades/$grade/teachers/$teacherId': typeof GradesGradeTeachersTeacherIdRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/exams/$examId'
     | '/grades/$grade'
     | '/dashboard/'
+    | '/dashboard/courses/$id'
     | '/dashboard/courses/'
     | '/grades/$grade/teachers/$teacherId'
   fileRoutesByTo: FileRoutesByTo
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/exams/$examId'
     | '/grades/$grade'
     | '/dashboard'
+    | '/dashboard/courses/$id'
     | '/dashboard/courses'
     | '/grades/$grade/teachers/$teacherId'
   id:
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/exams/$examId'
     | '/grades/$grade'
     | '/dashboard/'
+    | '/dashboard/courses/$id'
     | '/dashboard/courses/'
     | '/grades/$grade/teachers/$teacherId'
   fileRoutesById: FileRoutesById
@@ -240,6 +252,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCoursesIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/courses/$id': {
+      id: '/dashboard/courses/$id'
+      path: '/courses/$id'
+      fullPath: '/dashboard/courses/$id'
+      preLoaderRoute: typeof DashboardCoursesIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/grades/$grade/teachers/$teacherId': {
       id: '/grades/$grade/teachers/$teacherId'
       path: '/teachers/$teacherId'
@@ -253,12 +272,14 @@ declare module '@tanstack/react-router' {
 interface DashboardRouteChildren {
   DashboardTeachersRoute: typeof DashboardTeachersRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardCoursesIdRoute: typeof DashboardCoursesIdRoute
   DashboardCoursesIndexRoute: typeof DashboardCoursesIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardTeachersRoute: DashboardTeachersRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardCoursesIdRoute: DashboardCoursesIdRoute,
   DashboardCoursesIndexRoute: DashboardCoursesIndexRoute,
 }
 
