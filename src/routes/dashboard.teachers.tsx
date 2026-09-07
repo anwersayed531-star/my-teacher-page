@@ -233,9 +233,28 @@ function TeachersAdmin() {
                     </Button>
                   ))}
                 </div>
-                <div className="flex items-center gap-2">
-                  <Switch checked={t.is_published} onCheckedChange={(v) => setPublished.mutate({ id: t.id, value: v })} />
-                  <span className="text-sm text-muted-foreground">{t.is_published ? "ظاهر للطلاب" : "مخفي"}</span>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Switch checked={t.is_published} onCheckedChange={(v) => setPublished.mutate({ id: t.id, value: v })} />
+                    <span className="text-sm text-muted-foreground">{t.is_published ? "ظاهر للطلاب" : "مخفي"}</span>
+                  </div>
+                  <Label htmlFor={`photo-${t.id}`} className="cursor-pointer">
+                    <span className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs">
+                      <Upload className="h-3.5 w-3.5" />
+                      {setPhoto.isPending ? "جارٍ الرفع…" : t.photo_url ? "تغيير الصورة" : "إضافة صورة"}
+                    </span>
+                  </Label>
+                  <input
+                    id={`photo-${t.id}`}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setPhoto.mutate({ id: t.id, file });
+                      e.target.value = "";
+                    }}
+                  />
                 </div>
               </CardContent>
             </Card>
