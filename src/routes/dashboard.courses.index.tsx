@@ -79,6 +79,19 @@ function CoursesAdmin() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const setCover = useMutation({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      const ref = await uploadStorageFile("course-covers", file);
+      const { error } = await supabase.from("courses").update({ cover_url: ref }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("تم تحديث صورة الكورس");
+      void qc.invalidateQueries({ queryKey: ["admin"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const remove = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("courses").delete().eq("id", id);
