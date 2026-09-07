@@ -50,12 +50,8 @@ function Login() {
                 setError(code === "invalid_credentials" ? "البريد الإلكتروني أو كلمة المرور غير صحيحة." : signInError?.message ?? "تعذّر الدخول.");
                 return;
               }
-              const { data: roleRow } = await supabase
-                .from("user_roles")
-                .select("role")
-                .eq("user_id", data.user.id)
-                .maybeSingle();
-              if (roleRow?.role !== "teacher") {
+              const { data: isAdmin, error: roleError } = await supabase.rpc("is_admin");
+              if (roleError || !isAdmin) {
                 await supabase.auth.signOut();
                 setLoading(false);
                 setError("هذا الحساب ليس لديه صلاحية إدارة المنصة.");

@@ -14,8 +14,8 @@ export function useAdmin() {
       setLoading(false);
       return;
     }
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
-    setIsAdmin(data?.role === "teacher");
+    const { data, error } = await supabase.rpc("is_admin");
+    setIsAdmin(!error && data === true);
     setLoading(false);
   }, []);
 
