@@ -5,7 +5,7 @@ import { SiteFooter, SiteHeader } from "@/components/site-header";
 import { gradeName, isGradeSlug } from "@/lib/grades";
 import { listGradeTeachers } from "@/lib/school.functions";
 
-export const Route = createFileRoute("/grades/$grade")({
+export const Route = createFileRoute("/grades/$grade/")({
   loader: async ({ params }) => {
     if (!isGradeSlug(params.grade)) throw notFound();
     const teachers = await listGradeTeachers({ data: { grade: params.grade } });
