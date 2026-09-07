@@ -213,11 +213,28 @@ function CoursesAdmin() {
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </div>
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Switch checked={c.is_published} onCheckedChange={(v) => setPublished.mutate({ id: c.id, value: v })} />
                     <span className="text-sm text-muted-foreground">{c.is_published ? "منشور" : "مخفي"}</span>
                   </div>
+                  <Label htmlFor={`cover-${c.id}`} className="cursor-pointer">
+                    <span className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs">
+                      <Upload className="h-3.5 w-3.5" />
+                      {setCover.isPending ? "جارٍ الرفع…" : c.cover_url ? "تغيير الصورة" : "إضافة صورة"}
+                    </span>
+                  </Label>
+                  <input
+                    id={`cover-${c.id}`}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setCover.mutate({ id: c.id, file });
+                      e.target.value = "";
+                    }}
+                  />
                   <Button asChild size="sm" variant="outline" className="rounded-full">
                     <Link to="/dashboard/courses/$id" params={{ id: c.id }}>
                       <Pencil className="h-4 w-4" /> المحتوى
