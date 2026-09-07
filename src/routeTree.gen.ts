@@ -14,10 +14,10 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
-import { Route as GradesGradeRouteImport } from './routes/grades.$grade'
 import { Route as ExamsExamIdRouteImport } from './routes/exams.$examId'
 import { Route as DashboardTeachersRouteImport } from './routes/dashboard.teachers'
 import { Route as CoursesCourseIdRouteImport } from './routes/courses.$courseId'
+import { Route as GradesGradeIndexRouteImport } from './routes/grades.$grade.index'
 import { Route as DashboardCoursesIndexRouteImport } from './routes/dashboard.courses.index'
 import { Route as DashboardCoursesIdRouteImport } from './routes/dashboard.courses.$id'
 import { Route as GradesGradeTeachersTeacherIdRouteImport } from './routes/grades.$grade.teachers.$teacherId'
@@ -47,11 +47,6 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
-const GradesGradeRoute = GradesGradeRouteImport.update({
-  id: '/grades/$grade',
-  path: '/grades/$grade',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ExamsExamIdRoute = ExamsExamIdRouteImport.update({
   id: '/exams/$examId',
   path: '/exams/$examId',
@@ -67,6 +62,11 @@ const CoursesCourseIdRoute = CoursesCourseIdRouteImport.update({
   path: '/courses/$courseId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GradesGradeIndexRoute = GradesGradeIndexRouteImport.update({
+  id: '/grades/$grade/',
+  path: '/grades/$grade/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardCoursesIndexRoute = DashboardCoursesIndexRouteImport.update({
   id: '/courses/',
   path: '/courses/',
@@ -79,9 +79,9 @@ const DashboardCoursesIdRoute = DashboardCoursesIdRouteImport.update({
 } as any)
 const GradesGradeTeachersTeacherIdRoute =
   GradesGradeTeachersTeacherIdRouteImport.update({
-    id: '/teachers/$teacherId',
-    path: '/teachers/$teacherId',
-    getParentRoute: () => GradesGradeRoute,
+    id: '/grades/$grade/teachers/$teacherId',
+    path: '/grades/$grade/teachers/$teacherId',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -92,10 +92,10 @@ export interface FileRoutesByFullPath {
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/dashboard/teachers': typeof DashboardTeachersRoute
   '/exams/$examId': typeof ExamsExamIdRoute
-  '/grades/$grade': typeof GradesGradeRouteWithChildren
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
   '/dashboard/courses/': typeof DashboardCoursesIndexRoute
+  '/grades/$grade/': typeof GradesGradeIndexRoute
   '/grades/$grade/teachers/$teacherId': typeof GradesGradeTeachersTeacherIdRoute
 }
 export interface FileRoutesByTo {
@@ -105,10 +105,10 @@ export interface FileRoutesByTo {
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/dashboard/teachers': typeof DashboardTeachersRoute
   '/exams/$examId': typeof ExamsExamIdRoute
-  '/grades/$grade': typeof GradesGradeRouteWithChildren
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
   '/dashboard/courses': typeof DashboardCoursesIndexRoute
+  '/grades/$grade': typeof GradesGradeIndexRoute
   '/grades/$grade/teachers/$teacherId': typeof GradesGradeTeachersTeacherIdRoute
 }
 export interface FileRoutesById {
@@ -120,10 +120,10 @@ export interface FileRoutesById {
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/dashboard/teachers': typeof DashboardTeachersRoute
   '/exams/$examId': typeof ExamsExamIdRoute
-  '/grades/$grade': typeof GradesGradeRouteWithChildren
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/courses/$id': typeof DashboardCoursesIdRoute
   '/dashboard/courses/': typeof DashboardCoursesIndexRoute
+  '/grades/$grade/': typeof GradesGradeIndexRoute
   '/grades/$grade/teachers/$teacherId': typeof GradesGradeTeachersTeacherIdRoute
 }
 export interface FileRouteTypes {
@@ -136,10 +136,10 @@ export interface FileRouteTypes {
     | '/courses/$courseId'
     | '/dashboard/teachers'
     | '/exams/$examId'
-    | '/grades/$grade'
     | '/dashboard/'
     | '/dashboard/courses/$id'
     | '/dashboard/courses/'
+    | '/grades/$grade/'
     | '/grades/$grade/teachers/$teacherId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -149,10 +149,10 @@ export interface FileRouteTypes {
     | '/courses/$courseId'
     | '/dashboard/teachers'
     | '/exams/$examId'
-    | '/grades/$grade'
     | '/dashboard'
     | '/dashboard/courses/$id'
     | '/dashboard/courses'
+    | '/grades/$grade'
     | '/grades/$grade/teachers/$teacherId'
   id:
     | '__root__'
@@ -163,10 +163,10 @@ export interface FileRouteTypes {
     | '/courses/$courseId'
     | '/dashboard/teachers'
     | '/exams/$examId'
-    | '/grades/$grade'
     | '/dashboard/'
     | '/dashboard/courses/$id'
     | '/dashboard/courses/'
+    | '/grades/$grade/'
     | '/grades/$grade/teachers/$teacherId'
   fileRoutesById: FileRoutesById
 }
@@ -177,7 +177,8 @@ export interface RootRouteChildren {
   MeRoute: typeof MeRoute
   CoursesCourseIdRoute: typeof CoursesCourseIdRoute
   ExamsExamIdRoute: typeof ExamsExamIdRoute
-  GradesGradeRoute: typeof GradesGradeRouteWithChildren
+  GradesGradeIndexRoute: typeof GradesGradeIndexRoute
+  GradesGradeTeachersTeacherIdRoute: typeof GradesGradeTeachersTeacherIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -217,13 +218,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/grades/$grade': {
-      id: '/grades/$grade'
-      path: '/grades/$grade'
-      fullPath: '/grades/$grade'
-      preLoaderRoute: typeof GradesGradeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/exams/$examId': {
       id: '/exams/$examId'
       path: '/exams/$examId'
@@ -245,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoursesCourseIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/grades/$grade/': {
+      id: '/grades/$grade/'
+      path: '/grades/$grade'
+      fullPath: '/grades/$grade/'
+      preLoaderRoute: typeof GradesGradeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/courses/': {
       id: '/dashboard/courses/'
       path: '/courses'
@@ -261,10 +262,10 @@ declare module '@tanstack/react-router' {
     }
     '/grades/$grade/teachers/$teacherId': {
       id: '/grades/$grade/teachers/$teacherId'
-      path: '/teachers/$teacherId'
+      path: '/grades/$grade/teachers/$teacherId'
       fullPath: '/grades/$grade/teachers/$teacherId'
       preLoaderRoute: typeof GradesGradeTeachersTeacherIdRouteImport
-      parentRoute: typeof GradesGradeRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -287,18 +288,6 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
-interface GradesGradeRouteChildren {
-  GradesGradeTeachersTeacherIdRoute: typeof GradesGradeTeachersTeacherIdRoute
-}
-
-const GradesGradeRouteChildren: GradesGradeRouteChildren = {
-  GradesGradeTeachersTeacherIdRoute: GradesGradeTeachersTeacherIdRoute,
-}
-
-const GradesGradeRouteWithChildren = GradesGradeRoute._addFileChildren(
-  GradesGradeRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRouteWithChildren,
@@ -306,7 +295,8 @@ const rootRouteChildren: RootRouteChildren = {
   MeRoute: MeRoute,
   CoursesCourseIdRoute: CoursesCourseIdRoute,
   ExamsExamIdRoute: ExamsExamIdRoute,
-  GradesGradeRoute: GradesGradeRouteWithChildren,
+  GradesGradeIndexRoute: GradesGradeIndexRoute,
+  GradesGradeTeachersTeacherIdRoute: GradesGradeTeachersTeacherIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

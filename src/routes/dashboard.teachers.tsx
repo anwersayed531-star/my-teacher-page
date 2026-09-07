@@ -97,6 +97,19 @@ function TeachersAdmin() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const setPhoto = useMutation({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      const ref = await uploadStorageFile("teacher-photos", file);
+      const { error } = await supabase.from("teachers").update({ photo_url: ref }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("تم تحديث الصورة");
+      void qc.invalidateQueries({ queryKey: ["admin"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const remove = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("teachers").delete().eq("id", id);
